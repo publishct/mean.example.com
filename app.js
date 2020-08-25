@@ -10,6 +10,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
 var Users = require('./models/users');
+
 var authRouter = require('./routes/auth');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -67,6 +68,11 @@ passport.serializeUser(function(user, done){
 
 passport.deserializeUser(function(user, done){
   done(null, user);
+});
+
+app.use(function(req,res,next){
+  res.locals.session = req.session;
+  next();
 });
 
 app.use('/', indexRouter);
