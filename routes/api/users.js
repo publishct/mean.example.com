@@ -3,27 +3,31 @@ var router = express.Router();
 var Users = require('../../models/users');
 
 router.get('/', function(req, res, next) {
+
   Users.find({},function(err, users){
     if(err){
      return res.json({'success':false, 'error': err});
-   }
+    }
+
     return res.json({'success':true, 'users': users});
   });
+
 });
 
 router.get('/:userId', function(req,res){
   
   var userId = req.params.userId;
-   Users.findOne({'_id':userId}, function(err, user){
-     if(err){
+
+  Users.findOne({'_id':userId}, function(err, user){
+    if(err){
       return res.json({'success':false, 'error': err});
     }
-     return res.json({'success':true, 'user': user});
-   });
- });
 
+    return res.json({'success':true, 'user': user});
+  });
 
-module.exports = router;
+});
+
 router.post('/', function(req, res) {
   Users.create(new Users({
     username: req.body.username,
@@ -40,3 +44,48 @@ router.post('/', function(req, res) {
     
   });
 });
+
+router.put('/', function(req, res){
+
+  Users.findOne({'_id': req.body._id}, function(err, user){
+
+   if(err) {
+     return res.json({success: false, error: err});
+   }
+
+   if(user) {
+
+    let data = req.body;
+
+    if(data.username){
+      user.username = data.username;
+    };
+
+    if(data.email){
+    user.email = data.email;
+    };
+
+    if(data.first_name){
+    user.first_name = data.first_name;
+    };
+
+    if(data.last_name){
+    user.last_name = data.last_name;
+    };
+
+    user.save(function(err){
+      if(err){
+        return res.json({success: false, error: err});
+      }else{
+        return res.json({success: true, user:user});
+      }
+    });
+
+   }
+
+  });
+
+});
+
+
+module.exports = router;
