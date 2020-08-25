@@ -12,11 +12,12 @@ var app = express();
 //call the config file
 var config = require('./config.dev');
 
+
 //Connect to MongoDB
 mongoose.connect(config.mongodb, { useNewUrlParser: true });
 
 // //Test the file
-// console.log(config);
+console.log(config);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
