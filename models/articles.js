@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var slug = require('slug');
-
+var slug = require('slug'); 
+ 
 //Create a schema
 var Articles = new Schema({
   title: {

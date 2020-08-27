@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
-var Users = require('../../models/articles');
+var articles = require('../../models/articles');
 
 router.get('/', function(req, res, next) {
 
-  Articles.find({},function(err, articles){
+  articles.find({},function(err, articles){
     if(err){
      return res.json({'success':false, 'error': err});
     }
@@ -14,11 +14,11 @@ router.get('/', function(req, res, next) {
 
 });
 
-router.get('/:articleId', function(req,res){
+router.get('/:id', function(req,res){
   
-  var articleId = req.params.articleId;
+  var id = req.params.id;
 
-  Articles.findOne({'_id':articleId}, function(err, article){
+  articles.findOne({'_id':id}, function(err, article){
     if(err){
       return res.json({'success':false, 'error': err});
     }
@@ -29,15 +29,16 @@ router.get('/:articleId', function(req,res){
 });
 
 router.post('/', function(req, res) {
-  Articles.create(new Articles({
-    username: req.body.username,
-    email: req.body.email,
-    first_name: req.body.first_name,
-    last_name: req.body.last_name
-  }), function(err, user){
+  articles.create(new articles({
+    title: req.body.title,
+    description: req.body.description,
+    keywords: req.body.keywords,
+    body: req.body.body,
+    published: req.body.published
+  }), function(err, article){
     
     if(err){
-      return res.json({success: false, user: req.body, error: err});
+      return res.json({success: false, article: req.body, error: err});
     }
 
     return res.json({success: true, article: article});
@@ -47,37 +48,40 @@ router.post('/', function(req, res) {
 
 router.put('/', function(req, res){
 
-  Articles.findOne({'_id': req.body._id}, function(err, article){
+  articles.findOne({'_id': req.body._id}, function(err, article){
 
-   if(err) {
-     return res.json({success: false, error: err});
-   }
-
-   if(article) {
+  if(err) {
+    return res.json({success: false, error: err});
+  }else if(article) {
 
     let data = req.body;
 
-    if(data.username){
-      user.username = data.username;
-    };
+    if(data.title){
+    article.title = data.title;
+    }
 
-    if(data.email){
-    user.email = data.email;
-    };
+    if(data.description){
+    article.description = data.description;
+    }
 
-    if(data.first_name){
-    user.first_name = data.first_name;
-    };
+    if(data.keywords){
+    article.keywords = data.keywords;
+    }
 
-    if(data.last_name){
-    user.last_name = data.last_name;
-    };
+    if(data.body){
+    article.body = data.body;
+    }
+
+    if(data.published){
+      article.published = data.published;
+      article.offset = new Date(data.published).getTimezoneOffset();
+    }
 
     article.save(function(err){
       if(err){
         return res.json({success: false, error: err});
       }else{
-        return res.json({success: true, article:user});
+        return res.json({success: true, article:article});
       }
     });
 
@@ -91,7 +95,7 @@ router.delete('/:articleId', function(req,res){
 
   var articleId = req.params.articleId;
 
-  Articles.remove({'_id':articleId}, function(err,removed){
+  articles.remove({'_id':articleId}, function(err,removed){
 
     if(err){
       return res.json({success: false, error: err});
